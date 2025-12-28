@@ -8,6 +8,27 @@ const app = express();
 // path 
 const path = require('path');
 
+// // Create livereload server watching views & public
+if (process.env.NODE_ENV !== "production") {
+  const livereload = require("livereload");
+  const connectLiveReload = require("connect-livereload");
+
+  // Create livereload server watching views & public
+  const liveReloadServer = livereload.createServer();
+  liveReloadServer.watch([
+    path.join(__dirname, "views/*.ejs"),
+    path.join(__dirname, "public/css"),
+    path.join(__dirname, "public/js")
+  ]);
+
+  // Inject livereload script into Express
+  app.use(connectLiveReload());
+
+  liveReloadServer.server.once("connection", () => {
+    setTimeout(() => liveReloadServer.refresh("/"), 50);
+  });
+}
+
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -22,7 +43,7 @@ app.set("view engine", "ejs");
 
 // routes
 const routes = require('./routes');
-app.use("/", (req, res)=> res.send("Hello world!"))
+app.use("/", (req, res)=> res.render("index"))
 
 // port
 const PORT = process.env.PORT || '3000';
