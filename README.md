@@ -60,13 +60,12 @@ http://localhost:3000
 
 ```text
 Express-APP-template/
-│
-├── controllers/        # Request handlers (business logic)
-├── models/             # Database logic
-├── routes/             # Application routes
-├── views/              # EJS templates
-├── public/             # Static assets (CSS, JS, images)
 ├── src
+    ├── controllers/        # Request handlers (business logic)
+    ├── models/             # Database logic
+    ├── routes/             # Application routes
+    ├── views/              # EJS templates
+    ├── public/             # Static assets (CSS, JS, images)
     ├── app.js              # App entry point
 ├── package.json
 ├── .env.example        # Environment variables example
@@ -109,28 +108,6 @@ This template is ideal for:
 
 ---
 
-## 🛣 Roadmap (Planned Improvements)
-
-* 🔐 Authentication (sessions / JWT)
-* 🧪 Testing setup (Jest / Supertest)
-* 📘 API documentation (Swagger)
-* 🐳 Docker support
-* 🛡 Security hardening (Helmet, rate limiting)
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome.
-Feel free to fork this repo and improve it.
-
----
-
-## 📄 License
-
-This project is open-source and free to use for personal or commercial projects.
-
----
 
 ## ⭐ Support
 
