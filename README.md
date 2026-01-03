@@ -23,6 +23,12 @@ This template comes preconfigured with everything you need for modern Express de
 * 📁 **Static files** configuration
 * 🔄 **JSON & URL-encoded** body parsing middleware
 * 🧱 Clean, extensible project structure
+* 🔐 Authentication with PassportJS
+* 🔑 CSRF token for form data security.
+* 🪪 User Authorization-based access middlewares for routes.
+* ❗Error message handler with Connect-flash.
+* 🍪 Session Cookie management
+* 🗝️ Bycryptjs for password hashing
 
 ---
 
@@ -61,8 +67,9 @@ http://localhost:3000
 ```text
 Express-APP-template/
 ├── src
+    ├── auth/               # Handles authentication logic with passportjs
     ├── controllers/        # Request handlers (business logic)
-    ├── models/             # Database logic
+    ├── models/             # Database logic and queries
     ├── routes/             # Application routes
     ├── views/              # EJS templates
     ├── public/             # Static assets (CSS, JS, images)
