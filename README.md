@@ -30,6 +30,7 @@ This template comes preconfigured with everything you need for modern Express de
 * 🍪 Session Cookie management
 * 🗝️ Bycryptjs for password hashing
 
+
 ---
 
 ## 📦 Getting Started
@@ -47,14 +48,18 @@ git clone https://github.com/iamzehan/Express-APP-template.git
 ```bash
 npm install
 ```
+### 3️⃣ Create the session table in your PSQL Database
+```
+node src/models/session.js
+```
 
-### 3️⃣ Run the development server
+### 4️⃣ Run the development server
 
 ```bash
 npm run dev
 ```
 
-### 4️⃣ Open in browser
+### 5️⃣ Open in browser
 
 ```text
 http://localhost:3000
