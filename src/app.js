@@ -4,6 +4,8 @@
 const path = require("node:path");
 const express = require("express");
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
+const pool = require("./models/pool");
 const csrf = require("csurf");
 const flash = require("connect-flash");
 
@@ -68,15 +70,20 @@ app.use(express.urlencoded({ extended: false }));
  **************************************************/
 app.use(
   session({
+    store: new pgSession({
+      pool: pool,
+      tableName: 'session'
+    }),
     name: "sid",
-    secret: process.env.SESSION_SECRET || "dev-secret-key",
+    secret: process.env.SESSION_SECRET || "dev-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
-      secure: false, // set true in production (HTTPS)
-      sameSite: "lax",
-    },
+      maxAge: 30*24*60*60*1000, // 30 days,
+      httpOnly:true,
+      secure: false,
+      sameSite: "lax"
+    }
   })
 );
 
