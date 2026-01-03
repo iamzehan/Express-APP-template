@@ -1,27 +1,55 @@
-// environment
-require('dotenv').config()
+/**************************************************
+ * Core imports
+ **************************************************/
+const path = require("node:path");
+const express = require("express");
+const session = require("express-session");
+const csrf = require("csurf");
+const flash = require("connect-flash");
 
-// express
-const express = require('express');
+/**************************************************
+ * App-specific imports
+ **************************************************/
+const passport = require("./auth/passport");
+const routes = require("./routes");
+
+/**************************************************
+ * Environment variables
+ **************************************************/
+require("dotenv").config();
+
+/**************************************************
+ * App initialization
+ **************************************************/
 const app = express();
 
-// path 
-const path = require('path');
+/**************************************************
+ * View engine setup
+ **************************************************/
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
-// // Create livereload server watching views & public
+/**************************************************
+ * Static files
+ **************************************************/
+const assetsPath = path.join(__dirname, "public");
+app.use(express.static(assetsPath));
+
+/**************************************************
+ * Development-only: LiveReload
+ **************************************************/
 if (process.env.NODE_ENV !== "production") {
   const livereload = require("livereload");
   const connectLiveReload = require("connect-livereload");
 
-  // Create livereload server watching views & public
   const liveReloadServer = livereload.createServer();
+
   liveReloadServer.watch([
     path.join(__dirname, "views/*.ejs"),
     path.join(__dirname, "public/css"),
-    path.join(__dirname, "public/js")
+    path.join(__dirname, "public/js"),
   ]);
 
-  // Inject livereload script into Express
   app.use(connectLiveReload());
 
   liveReloadServer.server.once("connection", () => {
@@ -29,29 +57,71 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// middlewares
+/**************************************************
+ * Body parsers
+ **************************************************/
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: false }));
 
-// static files setup
-const assetsPath = path.join(__dirname, "public")
-app.use(express.static(assetsPath))
+/**************************************************
+ * Session configuration
+ **************************************************/
+app.use(
+  session({
+    name: "sid",
+    secret: process.env.SESSION_SECRET || "dev-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // set true in production (HTTPS)
+      sameSite: "lax",
+    },
+  })
+);
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+/**************************************************
+ * Authentication (Passport)
+ **************************************************/
+app.use(passport.initialize());
+app.use(passport.session());
 
-// routes
-const routes = require('./routes');
-app.use("/", (req, res)=> res.render("index"))
+/**************************************************
+ * Flash messages
+ **************************************************/
+app.use(flash());
 
-// port
-const PORT = process.env.PORT || '3000';
+/**************************************************
+ * CSRF protection (must be AFTER session)
+ **************************************************/
+app.use(csrf());
 
-// listen
-app.listen(PORT, (err)=>{
-    if(err){
-        console.log(err);
-    }
-    console.log(`Running server on: http://localhost:${PORT}`);
+/**************************************************
+ * Global template variables
+ **************************************************/
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
+  next();
+});
+
+/**************************************************
+ * Routes
+ **************************************************/
+app.use("/", (req, res) => {
+  res.render("index");
+});
+
+/**************************************************
+ * Server
+ **************************************************/
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error(err);
+  }
+  console.log(`Running server on: http://localhost:${PORT}`);
 });
